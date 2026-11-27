@@ -241,7 +241,7 @@ export default function HomePage() {
   return (
     <div
       ref={arenaRef}
-      className="relative min-h-dvh w-full overflow-x-hidden bg-[#030612] text-slate-100"
+      className="relative h-dvh w-full overflow-hidden bg-[#030612] text-slate-100"
     >
       <AnimatedBackground visualEffects={settings.visualEffects} />
 
@@ -273,23 +273,28 @@ export default function HomePage() {
           }}
         />
       ) : (
-        <main className="relative z-10 mx-auto flex min-h-dvh w-full max-w-6xl flex-col items-center justify-center gap-3 px-3 py-3 sm:px-6 sm:py-5">
-          <GameHUD
-            mode={mode}
-            status={status}
-            score={score}
-            settings={settings}
-            isFullscreen={isFullscreen}
-            onTogglePause={handleTogglePause}
-            onRestart={handleRestart}
-            onRequestExit={handleRequestExit}
-            onToggleSound={handleToggleSound}
-            onToggleMusic={handleToggleMusic}
-            onToggleFullscreen={handleToggleFullscreen}
-            onOpenSettings={handleOpenSettingsFromGame}
-          />
+        <main className="relative z-10 mx-auto flex h-dvh w-full max-w-6xl flex-col items-center justify-between gap-2 overflow-hidden px-3 py-2.5 sm:px-6 sm:py-3.5">
+          <div className="w-full shrink-0">
+            <GameHUD
+              mode={mode}
+              status={status}
+              score={score}
+              settings={settings}
+              isFullscreen={isFullscreen}
+              onTogglePause={handleTogglePause}
+              onRestart={handleRestart}
+              onRequestExit={handleRequestExit}
+              onToggleSound={handleToggleSound}
+              onToggleMusic={handleToggleMusic}
+              onToggleFullscreen={handleToggleFullscreen}
+              onOpenSettings={handleOpenSettingsFromGame}
+            />
+          </div>
 
-          <div className="w-full max-w-5xl">
+          <div
+            className="flex min-h-0 w-full max-w-5xl flex-1 items-center justify-center"
+            style={{ containerType: "size" }}
+          >
             <GameCanvas
               mode={mode}
               settings={settings}
@@ -307,11 +312,11 @@ export default function HomePage() {
             />
           </div>
 
-          <div className="w-full max-w-5xl">
+          <div className="w-full max-w-5xl shrink-0">
             <MobileControls mode={mode} onPlayerInput={handleTouchInput} />
           </div>
 
-          <div className="hidden items-center gap-5 text-[11px] tracking-wider text-slate-400 md:flex">
+          <div className="hidden shrink-0 items-center gap-5 text-[11px] tracking-wider text-slate-400 md:flex">
             <span>
               <kbd className="rounded border border-white/15 bg-slate-900 px-1.5 py-0.5 font-mono text-slate-200">
                 W

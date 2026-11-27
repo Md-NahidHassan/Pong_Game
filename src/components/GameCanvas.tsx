@@ -308,7 +308,11 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
   return (
     <div
       ref={containerRef}
-      className="relative aspect-[12/7] w-full overflow-hidden rounded-2xl border border-cyan-400/25 bg-[#040714] shadow-[0_0_50px_rgba(34,211,238,0.12),0_0_80px_rgba(168,85,247,0.1)]"
+      style={{
+        width: "min(100cqw, calc(100cqh * 12 / 7))",
+        height: "min(100cqh, calc(100cqw * 7 / 12))",
+      }}
+      className="relative overflow-hidden rounded-2xl border border-cyan-400/25 bg-[#040714] shadow-[0_0_50px_rgba(34,211,238,0.12),0_0_80px_rgba(168,85,247,0.1)]"
     >
       <canvas
         ref={canvasRef}

@@ -172,21 +172,21 @@ export const GameHUD: React.FC<GameHUDProps> = ({
       </div>
 
       {/* Scoreboard Bar */}
-      <div className="glass-panel flex items-center justify-between rounded-2xl px-4 py-2.5 sm:px-7 sm:py-3">
+      <div className="glass-panel flex items-center justify-between rounded-2xl px-4 py-2 sm:px-6 sm:py-2.5">
         {/* Player 1 */}
-        <div className="flex items-center gap-3 sm:gap-4">
-          <div className="hidden h-9 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_12px_#22d3ee] sm:block" />
+        <div className="flex items-center gap-2.5 sm:gap-4">
+          <div className="hidden h-8 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_12px_#22d3ee] sm:block" />
           <div>
             <div className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-cyan-400 sm:text-xs">
               Player 1
             </div>
-            <div className="hidden text-[11px] text-slate-400 sm:block">
+            <div className="hidden text-[10px] text-slate-400 sm:block">
               W / S Keys
             </div>
           </div>
           <div
             key={`p1-${score.player1}`}
-            className="animate-score-pop neon-text-cyan font-mono text-3xl font-black text-cyan-300 sm:text-5xl"
+            className="animate-score-pop neon-text-cyan font-mono text-2xl font-black text-cyan-300 sm:text-4xl"
           >
             {score.player1}
           </div>
@@ -197,7 +197,7 @@ export const GameHUD: React.FC<GameHUDProps> = ({
           <div className="rounded-full border border-white/10 bg-white/5 px-3 py-0.5 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-300">
             First to {settings.winningScore}
           </div>
-          <div className="mt-1 flex items-center gap-1.5 font-mono text-xs font-bold text-slate-400">
+          <div className="mt-0.5 flex items-center gap-1.5 font-mono text-xs font-bold text-slate-400">
             <Zap
               className={`h-3.5 w-3.5 ${
                 score.rally >= 5 ? "text-amber-400" : "text-slate-500"
@@ -217,10 +217,10 @@ export const GameHUD: React.FC<GameHUDProps> = ({
         </div>
 
         {/* Player 2 / AI */}
-        <div className="flex items-center gap-3 sm:gap-4">
+        <div className="flex items-center gap-2.5 sm:gap-4">
           <div
             key={`p2-${score.player2}`}
-            className="animate-score-pop neon-text-purple font-mono text-3xl font-black text-purple-300 sm:text-5xl"
+            className="animate-score-pop neon-text-purple font-mono text-2xl font-black text-purple-300 sm:text-4xl"
           >
             {score.player2}
           </div>
@@ -228,11 +228,11 @@ export const GameHUD: React.FC<GameHUDProps> = ({
             <div className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-purple-400 sm:text-xs">
               {mode === "ai" ? `AI (${diffCfg.label})` : "Player 2"}
             </div>
-            <div className="hidden text-[11px] text-slate-400 sm:block">
+            <div className="hidden text-[10px] text-slate-400 sm:block">
               {mode === "ai" ? "Predictive Bot" : "↑ / ↓ Arrows"}
             </div>
           </div>
-          <div className="hidden h-9 w-1.5 rounded-full bg-purple-400 shadow-[0_0_12px_#c084fc] sm:block" />
+          <div className="hidden h-8 w-1.5 rounded-full bg-purple-400 shadow-[0_0_12px_#c084fc] sm:block" />
         </div>
       </div>
     </div>

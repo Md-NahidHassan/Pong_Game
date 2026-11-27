@@ -1,5 +1,7 @@
 # NEON PONG — The Ultimate Arcade Experience
 
+**Live Demo:** [https://nahidponggame.vercel.app](https://nahidponggame.vercel.app)
+
 A futuristic, production-ready Pong arcade web game built with **Next.js (App Router)**, **TypeScript**, **Tailwind CSS**, and **HTML5 Canvas**.
 
 ## Features
