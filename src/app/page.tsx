@@ -76,14 +76,6 @@ export default function HomePage() {
       soundVolume: settings.soundVolume,
     });
 
-    if (
-      status !== "menu" &&
-      settings.soundEnabled &&
-      settings.musicEnabled
-    ) {
-      arcadeAudio.startMusic();
-    }
-
     if (settingsHydrated) {
       try {
         window.localStorage.setItem(
@@ -94,7 +86,27 @@ export default function HomePage() {
         // Ignore storage errors
       }
     }
-  }, [settings, settingsHydrated, status]);
+  }, [settings, settingsHydrated]);
+
+  // Unlock Web Audio & start menu/game music on first user gesture anywhere
+  useEffect(() => {
+    const unlockAudio = () => {
+      arcadeAudio.unlock();
+      if (settings.soundEnabled && settings.musicEnabled) {
+        arcadeAudio.startMusic();
+      }
+    };
+
+    window.addEventListener("pointerdown", unlockAudio, { passive: true });
+    window.addEventListener("keydown", unlockAudio, { passive: true });
+    window.addEventListener("touchstart", unlockAudio, { passive: true });
+
+    return () => {
+      window.removeEventListener("pointerdown", unlockAudio);
+      window.removeEventListener("keydown", unlockAudio);
+      window.removeEventListener("touchstart", unlockAudio);
+    };
+  }, [settings.musicEnabled, settings.soundEnabled]);
 
   // Track fullscreen changes
   useEffect(() => {
@@ -174,7 +186,6 @@ export default function HomePage() {
 
   const handleConfirmExit = useCallback(() => {
     arcadeAudio.playUiClick();
-    arcadeAudio.stopMusic();
     resumeAfterConfirmRef.current = false;
     setShowConfirmExit(false);
     setMatchSummary(null);
@@ -188,24 +199,40 @@ export default function HomePage() {
   }, []);
 
   const handleToggleSound = useCallback(() => {
-    arcadeAudio.unlock();
-    setSettings((prev) => {
-      const next = { ...prev, soundEnabled: !prev.soundEnabled };
-      return next;
+    const nextEnabled = !settings.soundEnabled;
+    const next = { ...settings, soundEnabled: nextEnabled };
+    arcadeAudio.updateSettings({
+      soundEnabled: nextEnabled,
+      musicEnabled: next.musicEnabled,
+      soundVolume: next.soundVolume,
     });
-  }, []);
-
-  const handleToggleMusic = useCallback(() => {
     arcadeAudio.unlock();
-    setSettings((prev) => {
-      const nextEnabled = !prev.musicEnabled;
-      const next = { ...prev, musicEnabled: nextEnabled };
-      if (nextEnabled && prev.soundEnabled && status !== "menu") {
+    if (nextEnabled) {
+      arcadeAudio.playUiClick();
+      if (next.musicEnabled) {
         arcadeAudio.startMusic();
       }
-      return next;
+    }
+    setSettings(next);
+  }, [settings]);
+
+  const handleToggleMusic = useCallback(() => {
+    const nextEnabled = !settings.musicEnabled;
+    const next = { ...settings, musicEnabled: nextEnabled };
+    arcadeAudio.updateSettings({
+      soundEnabled: next.soundEnabled,
+      musicEnabled: nextEnabled,
+      soundVolume: next.soundVolume,
     });
-  }, [status]);
+    arcadeAudio.unlock();
+    if (next.soundEnabled) {
+      arcadeAudio.playUiClick();
+      if (nextEnabled) {
+        arcadeAudio.startMusic();
+      }
+    }
+    setSettings(next);
+  }, [settings]);
 
   const handleToggleFullscreen = useCallback(async () => {
     arcadeAudio.playUiClick();
@@ -350,6 +377,13 @@ export default function HomePage() {
                 ESC
               </kbd>{" "}
               Exit
+            </span>
+            <span className="text-slate-600">·</span>
+            <span>
+              Built by{" "}
+              <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text font-bold text-transparent">
+                Nahid
+              </span>
             </span>
           </div>
         </main>

@@ -228,8 +228,11 @@ export const MainMenu: React.FC<MainMenuProps> = ({
         </div>
       </main>
 
-      <footer className="shrink-0 text-center text-[10px] tracking-wider text-slate-500">
-        BUILT WITH NEXT.JS · TYPESCRIPT · HTML5 CANVAS
+      <footer className="shrink-0 text-center text-[11px] font-medium tracking-wider text-slate-400">
+        Built by{" "}
+        <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text font-bold text-transparent">
+          Nahid
+        </span>
       </footer>
     </div>
   );

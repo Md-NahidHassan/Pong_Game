@@ -41,14 +41,31 @@ class ArcadeAudioEngine {
     }
 
     if (this.ctx.state === "suspended") {
-      void this.ctx.resume().catch(() => {});
+      void this.ctx
+        .resume()
+        .then(() => {
+          this.syncGains();
+          if (this.soundEnabled && this.musicEnabled && !this.isPlayingMusic) {
+            this.startMusic();
+          }
+        })
+        .catch(() => {});
     }
 
     return this.ctx;
   }
 
   public unlock(): void {
-    this.ensureContext();
+    const ctx = this.ensureContext();
+    if (
+      ctx &&
+      ctx.state === "running" &&
+      this.soundEnabled &&
+      this.musicEnabled &&
+      !this.isPlayingMusic
+    ) {
+      this.startMusic();
+    }
   }
 
   public updateSettings(opts: {
@@ -63,6 +80,8 @@ class ArcadeAudioEngine {
 
     if (!this.soundEnabled || !this.musicEnabled) {
       this.stopMusic();
+    } else if (this.ctx && this.ctx.state === "running" && !this.isPlayingMusic) {
+      this.startMusic();
     }
   }
 
@@ -73,9 +92,9 @@ class ArcadeAudioEngine {
     const now = this.ctx.currentTime;
     const master = this.soundEnabled ? this.volume : 0;
     this.masterGain.gain.setTargetAtTime(master, now, 0.02);
-    this.sfxGain.gain.setTargetAtTime(0.85, now, 0.02);
+    this.sfxGain.gain.setTargetAtTime(0.9, now, 0.02);
     this.musicGain.gain.setTargetAtTime(
-      this.soundEnabled && this.musicEnabled ? 0.24 : 0,
+      this.soundEnabled && this.musicEnabled ? 0.38 : 0,
       now,
       0.05
     );
@@ -363,7 +382,7 @@ class ArcadeAudioEngine {
         osc.type = "triangle";
         osc.frequency.setValueAtTime(arpFreq, now);
 
-        gain.gain.setValueAtTime(0.11, now);
+        gain.gain.setValueAtTime(0.16, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
 
         osc.connect(gain);
