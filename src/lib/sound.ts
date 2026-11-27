@@ -17,6 +17,26 @@ class ArcadeAudioEngine {
   private musicTimer: number | null = null;
   private musicStep = 0;
   private isPlayingMusic = false;
+  private stateListeners = new Set<(running: boolean) => void>();
+
+  private notifyStateListeners(): void {
+    const running = this.isRunning();
+    this.stateListeners.forEach((listener) => listener(running));
+  }
+
+  public isRunning(): boolean {
+    return this.ctx?.state === "running";
+  }
+
+  public subscribeRunningState(
+    listener: (running: boolean) => void
+  ): () => void {
+    this.stateListeners.add(listener);
+    listener(this.isRunning());
+    return () => {
+      this.stateListeners.delete(listener);
+    };
+  }
 
   private ensureContext(): AudioContext | null {
     if (typeof window === "undefined") return null;
@@ -29,6 +49,18 @@ class ArcadeAudioEngine {
       if (!AudioCtx) return null;
 
       this.ctx = new AudioCtx();
+      this.ctx.addEventListener("statechange", () => {
+        this.notifyStateListeners();
+        if (
+          this.ctx?.state === "running" &&
+          this.soundEnabled &&
+          this.musicEnabled &&
+          !this.isPlayingMusic
+        ) {
+          this.startMusic();
+        }
+      });
+
       this.masterGain = this.ctx.createGain();
       this.sfxGain = this.ctx.createGain();
       this.musicGain = this.ctx.createGain();
@@ -38,6 +70,7 @@ class ArcadeAudioEngine {
       this.masterGain.connect(this.ctx.destination);
 
       this.syncGains();
+      this.notifyStateListeners();
     }
 
     if (this.ctx.state === "suspended") {
@@ -45,6 +78,7 @@ class ArcadeAudioEngine {
         .resume()
         .then(() => {
           this.syncGains();
+          this.notifyStateListeners();
           if (this.soundEnabled && this.musicEnabled && !this.isPlayingMusic) {
             this.startMusic();
           }

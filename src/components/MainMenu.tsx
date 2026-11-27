@@ -18,6 +18,7 @@ import {
 interface MainMenuProps {
   settings: GameSettings;
   visitCount: number | null;
+  audioLocked: boolean;
   onPlayVsAI: () => void;
   onPlayTwoPlayer: () => void;
   onOpenHowToPlay: () => void;
@@ -30,6 +31,7 @@ interface MainMenuProps {
 export const MainMenu: React.FC<MainMenuProps> = ({
   settings,
   visitCount,
+  audioLocked,
   onPlayVsAI,
   onPlayTwoPlayer,
   onOpenHowToPlay,
@@ -66,16 +68,33 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           <button
             type="button"
             onClick={onToggleMusic}
-            title={settings.musicEnabled ? "Mute Music" : "Enable Music"}
-            aria-label={settings.musicEnabled ? "Mute Music" : "Enable Music"}
-            className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold uppercase tracking-wider backdrop-blur-md transition sm:py-2 ${
+            title={
+              audioLocked
+                ? "Click anywhere to start music"
+                : settings.musicEnabled
+                  ? "Mute Music"
+                  : "Enable Music"
+            }
+            aria-label={
+              audioLocked
+                ? "Click anywhere to start music"
+                : settings.musicEnabled
+                  ? "Mute Music"
+                  : "Enable Music"
+            }
+            className={`relative flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold uppercase tracking-wider backdrop-blur-md transition sm:py-2 ${
               settings.musicEnabled && settings.soundEnabled
                 ? "border-purple-400/40 bg-purple-500/15 text-purple-200 hover:bg-purple-500/25"
                 : "border-white/10 bg-slate-900/70 text-slate-400 hover:border-white/25 hover:text-white"
             }`}
           >
+            {audioLocked && (
+              <span className="h-2 w-2 animate-ping rounded-full bg-purple-400" />
+            )}
             <Music className="h-4 w-4" />
-            <span className="hidden sm:inline">Music</span>
+            <span className="hidden sm:inline">
+              {audioLocked ? "Tap for Audio" : "Music"}
+            </span>
           </button>
 
           <button

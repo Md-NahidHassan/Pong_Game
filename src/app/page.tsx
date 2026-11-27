@@ -54,6 +54,7 @@ export default function HomePage() {
   const [settings, setSettings] = useState<GameSettings>(DEFAULT_SETTINGS);
   const [settingsHydrated, setSettingsHydrated] = useState(false);
   const [visitCount, setVisitCount] = useState<number | null>(null);
+  const [audioRunning, setAudioRunning] = useState(false);
 
   const [mode, setMode] = useState<GameMode>("ai");
   const [status, setStatus] = useState<GameStatus>("menu");
@@ -107,8 +108,14 @@ export default function HomePage() {
     }
   }, [settings, settingsHydrated]);
 
-  // Unlock Web Audio & start menu/game music on first user gesture anywhere
+  // Track AudioContext running state and try unlocking immediately + on first gesture
   useEffect(() => {
+    const unsubscribe = arcadeAudio.subscribeRunningState(setAudioRunning);
+
+    if (settingsHydrated && settings.soundEnabled && settings.musicEnabled) {
+      arcadeAudio.unlock();
+    }
+
     const unlockAudio = () => {
       arcadeAudio.unlock();
       if (settings.soundEnabled && settings.musicEnabled) {
@@ -117,15 +124,20 @@ export default function HomePage() {
     };
 
     window.addEventListener("pointerdown", unlockAudio, { passive: true });
+    window.addEventListener("click", unlockAudio, { passive: true });
     window.addEventListener("keydown", unlockAudio, { passive: true });
     window.addEventListener("touchstart", unlockAudio, { passive: true });
+    window.addEventListener("touchend", unlockAudio, { passive: true });
 
     return () => {
+      unsubscribe();
       window.removeEventListener("pointerdown", unlockAudio);
+      window.removeEventListener("click", unlockAudio);
       window.removeEventListener("keydown", unlockAudio);
       window.removeEventListener("touchstart", unlockAudio);
+      window.removeEventListener("touchend", unlockAudio);
     };
-  }, [settings.musicEnabled, settings.soundEnabled]);
+  }, [settingsHydrated, settings.musicEnabled, settings.soundEnabled]);
 
   // Track total visits (starts from 150) once per page load
   useEffect(() => {
@@ -249,6 +261,19 @@ export default function HomePage() {
   }, [settings]);
 
   const handleToggleMusic = useCallback(() => {
+    // If music is enabled in settings but browser autoplay kept AudioContext locked,
+    // clicking the music button should unlock and start music rather than turning it off.
+    if (
+      settings.soundEnabled &&
+      settings.musicEnabled &&
+      !arcadeAudio.isRunning()
+    ) {
+      arcadeAudio.unlock();
+      arcadeAudio.playUiClick();
+      arcadeAudio.startMusic();
+      return;
+    }
+
     const nextEnabled = !settings.musicEnabled;
     const next = { ...settings, musicEnabled: nextEnabled };
     arcadeAudio.updateSettings({
@@ -308,6 +333,9 @@ export default function HomePage() {
         <MainMenu
           settings={settings}
           visitCount={visitCount}
+          audioLocked={
+            settings.soundEnabled && settings.musicEnabled && !audioRunning
+          }
           onPlayVsAI={() => {
             arcadeAudio.unlock();
             arcadeAudio.playUiClick();
