@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body {
+    background-color: #030612;
+    color: #f8fafc;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@keyframes gridMove {
+  0% {
+    transform: perspective(560px) rotateX(62deg) translateY(0);
+  }
+  100% {
+    transform: perspective(560px) rotateX(62deg) translateY(60px);
+  }
+}
+
+@keyframes neonPulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 14px rgba(34, 211, 238, 0.55))
+      drop-shadow(0 0 32px rgba(168, 85, 247, 0.35));
+  }
+  50% {
+    filter: drop-shadow(0 0 22px rgba(34, 211, 238, 0.85))
+      drop-shadow(0 0 48px rgba(168, 85, 247, 0.55));
+  }
+}
+
+@keyframes scorePop {
+  0% {
+    transform: scale(1.38);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes floatOrb {
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  50% {
+    transform: translateY(-18px) translateX(10px);
+  }
+}
+
+.animate-grid-move {
+  animation: gridMove 3.2s linear infinite;
+}
+
+.animate-neon-pulse {
+  animation: neonPulse 3s ease-in-out infinite;
+}
+
+.animate-score-pop {
+  animation: scorePop 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.animate-float-orb {
+  animation: floatOrb 7s ease-in-out infinite;
+}
+
+.glass-panel {
+  background: linear-gradient(
+    145deg,
+    rgba(15, 23, 42, 0.78),
+    rgba(10, 14, 34, 0.88)
+  );
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  box-shadow:
+    0 20px 50px rgba(2, 6, 23, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.neon-text-cyan {
+  text-shadow:
+    0 0 12px rgba(34, 211, 238, 0.7),
+    0 0 28px rgba(34, 211, 238, 0.35);
+}
+
+.neon-text-purple {
+  text-shadow:
+    0 0 12px rgba(192, 132, 252, 0.7),
+    0 0 28px rgba(168, 85, 247, 0.35);
+}
