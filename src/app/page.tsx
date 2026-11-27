@@ -32,9 +32,28 @@ const INITIAL_SCORE: ScoreState = {
   lastScorer: null,
 };
 
+let visitRequestPromise: Promise<number | null> | null = null;
+
+function trackPageVisit(): Promise<number | null> {
+  if (!visitRequestPromise) {
+    visitRequestPromise = fetch("/api/visits", {
+      method: "POST",
+      cache: "no-store",
+    })
+      .then(async (res) => {
+        if (!res.ok) return null;
+        const data = (await res.json()) as { visits?: unknown };
+        return typeof data.visits === "number" ? data.visits : null;
+      })
+      .catch(() => null);
+  }
+  return visitRequestPromise;
+}
+
 export default function HomePage() {
   const [settings, setSettings] = useState<GameSettings>(DEFAULT_SETTINGS);
   const [settingsHydrated, setSettingsHydrated] = useState(false);
+  const [visitCount, setVisitCount] = useState<number | null>(null);
 
   const [mode, setMode] = useState<GameMode>("ai");
   const [status, setStatus] = useState<GameStatus>("menu");
@@ -107,6 +126,19 @@ export default function HomePage() {
       window.removeEventListener("touchstart", unlockAudio);
     };
   }, [settings.musicEnabled, settings.soundEnabled]);
+
+  // Track total visits (starts from 150) once per page load
+  useEffect(() => {
+    let active = true;
+    trackPageVisit().then((count) => {
+      if (active && count !== null) {
+        setVisitCount(count);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   // Track fullscreen changes
   useEffect(() => {
@@ -275,6 +307,7 @@ export default function HomePage() {
       {status === "menu" ? (
         <MainMenu
           settings={settings}
+          visitCount={visitCount}
           onPlayVsAI={() => {
             arcadeAudio.unlock();
             arcadeAudio.playUiClick();

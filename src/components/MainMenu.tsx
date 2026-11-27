@@ -5,6 +5,7 @@ import { DIFFICULTY_CONFIG, WINNING_SCORE_OPTIONS } from "@/lib/constants";
 import { GameSettings, WinningScore } from "@/types/game";
 import {
   Bot,
+  Eye,
   HelpCircle,
   Music,
   Settings,
@@ -16,6 +17,7 @@ import {
 
 interface MainMenuProps {
   settings: GameSettings;
+  visitCount: number | null;
   onPlayVsAI: () => void;
   onPlayTwoPlayer: () => void;
   onOpenHowToPlay: () => void;
@@ -27,6 +29,7 @@ interface MainMenuProps {
 
 export const MainMenu: React.FC<MainMenuProps> = ({
   settings,
+  visitCount,
   onPlayVsAI,
   onPlayTwoPlayer,
   onOpenHowToPlay,
@@ -40,10 +43,23 @@ export const MainMenu: React.FC<MainMenuProps> = ({
   return (
     <div className="relative z-10 flex h-dvh flex-col items-center justify-between overflow-y-auto px-4 py-3 sm:overflow-hidden sm:px-6 sm:py-4">
       {/* Top utility bar */}
-      <header className="flex w-full max-w-4xl shrink-0 items-center justify-between">
-        <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/25 bg-slate-900/70 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-cyan-300 backdrop-blur-md sm:px-3.5 sm:py-1.5 sm:text-[11px]">
-          <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]" />
-          60 FPS Arcade Engine
+      <header className="flex w-full max-w-4xl shrink-0 flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/25 bg-slate-900/70 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-cyan-300 backdrop-blur-md sm:px-3.5 sm:py-1.5 sm:text-[11px]">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]" />
+            60 FPS Arcade Engine
+          </div>
+
+          <div
+            className="inline-flex items-center gap-1.5 rounded-full border border-purple-400/30 bg-slate-900/75 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-purple-200 backdrop-blur-md sm:px-3.5 sm:py-1.5 sm:text-[11px]"
+            title="Total Arena Visits"
+          >
+            <Eye className="h-3.5 w-3.5 text-purple-400" />
+            <span className="tabular-nums text-white">
+              {visitCount !== null ? visitCount.toLocaleString() : "---"}
+            </span>
+            <span className="text-purple-300/80">Visits</span>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
